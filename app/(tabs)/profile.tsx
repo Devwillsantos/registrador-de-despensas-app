@@ -178,7 +178,8 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(17)
   },
   accountOptions: {
-    marginTop: spacingY._35
+    marginTop: spacingY._35,
+    paddingBottom: verticalScale(110)
   },
   flexRow: {
     flexDirection: 'row',

@@ -7,6 +7,7 @@ import { colors } from '../constants/theme'
 const ScreenWrapper = ({ style, children }: ScreenWrapperProps) => {
   return (
     <SafeAreaView
+      edges={['top', 'left', 'right']}
       style={[
         {
           flex: 1,

@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   scrollViewStyle: {
     marginTop: spacingY._10,
-    paddingBottom: verticalScale(100),
+    paddingBottom: verticalScale(120),
     gap: spacingY._25
   }
 })

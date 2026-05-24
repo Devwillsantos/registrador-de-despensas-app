@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   tabbar: {
     flexDirection: 'row',
     width: '100%',
-    height: Platform.OS == 'ios' ? verticalScale(73) : verticalScale(55),
+    height: Platform.OS == 'ios' ? verticalScale(90) : verticalScale(75),
     backgroundColor: colors.neutral800,
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1
   },
   tabbarItem: {
-    marginBottom: Platform.OS == 'ios' ? spacingY._10 : spacingY._5,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingBottom: Platform.OS === 'ios' ? spacingY._10 : 0
   }
 })

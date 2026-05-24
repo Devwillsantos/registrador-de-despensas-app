@@ -43,7 +43,7 @@ const Statistics = () => {
           contentContainerStyle={{
             gap: spacingY._20,
             paddingTop: spacingY._5,
-            paddingBottom: verticalScale(100)
+            paddingBottom: verticalScale(120)
           }}>
           <View>
             <TransactionList
