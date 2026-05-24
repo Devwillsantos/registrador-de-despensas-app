@@ -43,13 +43,13 @@ const Login = () => {
             Olá,
           </Typo>
           <Typo size={30} fontWeight={'800'}>
-            Bem-vindo de volta
+            Bem-vindo de volta! 👋
           </Typo>
         </View>
 
         <View style={styles.form}>
           <Typo size={16} color={colors.textLighter}>
-            Faça login para rastrear todas as suas despesas
+            Faça login para rastrear todas as suas despesas. 😊
           </Typo>
           <Input
             placeholder={'Digite seu email'}
@@ -74,10 +74,6 @@ const Login = () => {
               />
             }
           />
-
-          <Typo size={14} color={colors.text} style={{ alignSelf: 'flex-end' }}>
-            Esqueceu a senha?
-          </Typo>
 
           <Button loading={isLoading} onPress={handleSubmit}>
             <Typo fontWeight={'700'} color={colors.black} size={21}>

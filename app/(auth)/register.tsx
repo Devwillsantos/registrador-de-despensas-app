@@ -50,13 +50,13 @@ const Register = () => {
             Vamos
           </Typo>
           <Typo size={30} fontWeight={'800'}>
-            Começar
+            Começar! 🙂
           </Typo>
         </View>
 
         <View style={styles.form}>
           <Typo size={16} color={colors.textLighter}>
-            Crie uma conta para rastrear todas as suas despesas
+            Crie uma conta para rastrear todas as suas despesas. 😊
           </Typo>
           <Input
             placeholder={'Digite seu nome'}
