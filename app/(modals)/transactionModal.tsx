@@ -337,7 +337,8 @@ const TransactionModal = () => {
             />
           </View>
 
-          <View style={styles.inputContainer}>
+              {/* Receipt's image */}
+{/*           <View style={styles.inputContainer}>
             <View style={styles.flexRow}>
               <Typo color={colors.neutral200} size={16}>
                 Recibo
@@ -354,7 +355,7 @@ const TransactionModal = () => {
               }
               placeholder='Enviar Imagem'
             />
-          </View>
+          </View> */}
         </ScrollView>
       </View>
 
