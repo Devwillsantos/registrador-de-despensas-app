@@ -1,13 +1,9 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth'
+import { initializeAuth, getReactNativePersistence, indexedDBLocalPersistence } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD2naJiPXRKfmV__kncQag7sUFqNz1gSZI",
   authDomain: "expense-tracker-ee165.firebaseapp.com",
@@ -17,13 +13,12 @@ const firebaseConfig = {
   appId: "1:313985431681:web:57332403865b76d6d73580"
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-// auth with AsyncStorage persistence
 export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
+  persistence: Platform.OS === 'web'
+    ? indexedDBLocalPersistence          // web browser
+    : getReactNativePersistence(AsyncStorage)  // iOS / Android
 })
 
-// db
 export const firestore = getFirestore(app)
