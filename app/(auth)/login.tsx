@@ -2,9 +2,9 @@ import { colors } from '@/constants/theme'
 import { useAuth } from '@/contexts/authContext'
 import { verticalScale } from '@/utils/styling'
 import { useRouter } from 'expo-router'
-import { At, Lock } from 'phosphor-react-native'
+import { At, Lock, WarningCircle, X } from 'phosphor-react-native'
 import React, { useRef, useState } from 'react'
-import { Alert, Pressable, StyleSheet, View } from 'react-native'
+import { Modal, Pressable, StyleSheet, View } from 'react-native'
 import BackButton from '../../components/BackButton'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -16,19 +16,26 @@ const Login = () => {
   const emailRef = useRef('')
   const passwordRef = useRef('')
   const [isLoading, setIsLoading] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalMessage, setModalMessage] = useState('')
   const router = useRouter()
   const { login: loginUser } = useAuth()
 
+  const showModal = (message: string) => {
+    setModalMessage(message)
+    setModalVisible(true)
+  }
+
   const handleSubmit = async () => {
     if (!emailRef.current || !passwordRef.current) {
-      Alert.alert('Entrar', 'Por favor, preencha todos os campos')
+      showModal('Por favor, preencha todos os campos')
       return
     }
     setIsLoading(true)
     const response = await loginUser(emailRef.current, passwordRef.current)
     setIsLoading(false)
     if (!response.success) {
-      Alert.alert('Login', response.msg)
+      showModal(response.msg)
       return
     }
   }
@@ -91,6 +98,48 @@ const Login = () => {
           </Pressable>
         </View>
       </View>
+
+      {/* Validation Modal */}
+      <Modal
+        transparent
+        animationType='fade'
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Pressable
+              style={styles.modalCloseIcon}
+              onPress={() => setModalVisible(false)}
+            >
+              <X size={20} color={colors.neutral300} weight='bold' />
+            </Pressable>
+
+            <WarningCircle
+              size={verticalScale(48)}
+              color={colors.primary}
+              weight='fill'
+            />
+
+            <Typo size={18} fontWeight='700' style={styles.modalTitle}>
+              Entrar
+            </Typo>
+
+            <Typo size={15} color={colors.textLighter} style={styles.modalMessage}>
+              Credenciais inválidas.
+            </Typo>
+
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Typo size={15} fontWeight='700' color={colors.black}>
+                Entendido
+              </Typo>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   )
 }
@@ -126,5 +175,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.text,
     fontSize: verticalScale(15)
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacingX._20,
+  },
+  modalContainer: {
+    width: '100%',
+    backgroundColor: colors.neutral800,
+    borderRadius: 20,
+    paddingVertical: spacingY._30,
+    paddingHorizontal: spacingX._20,
+    alignItems: 'center',
+    gap: spacingY._10,
+  },
+  modalCloseIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    padding: 4,
+  },
+  modalTitle: {
+    marginTop: spacingY._10,
+  },
+  modalMessage: {
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  modalButton: {
+    marginTop: spacingY._10,
+    backgroundColor: colors.primary,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: spacingX._20,
+    borderRadius: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
 })
