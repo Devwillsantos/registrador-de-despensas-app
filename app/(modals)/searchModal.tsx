@@ -18,7 +18,9 @@ const SearchModal = () => {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
 
-  const constraints = [where('uid', '==', user?.uid), orderBy('date', 'desc')]
+  const constraints = user?.uid
+    ? [where('uid', '==', user.uid), orderBy('date', 'desc')]
+    : []
 
   const {
     data: allTransactions,

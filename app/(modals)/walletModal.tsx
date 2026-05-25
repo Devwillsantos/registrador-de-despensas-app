@@ -38,6 +38,10 @@ const WalletModal = () => {
   }, [])
 
   const onSubmit = async () => {
+    if (!user?.uid) {
+      Alert.alert('Erro', 'Usuário não autenticado')
+      return
+    }
     let { name, image } = wallet
     if (!name.trim() || !image) {
       Alert.alert('Carteira', 'Por favor, preencha todos os campos.')
@@ -46,7 +50,7 @@ const WalletModal = () => {
     const data: WalletType = {
       name,
       image,
-      uid: user?.uid
+      uid: user.uid
     }
     if (oldWallet?.id) data.id = oldWallet.id
     setLoading(true)

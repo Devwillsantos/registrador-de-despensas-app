@@ -48,10 +48,12 @@ const TransactionModal = () => {
     data: wallets,
     error: walletError,
     loading: walletLoading
-  } = useFetchData<WalletType>('wallets', [
-    where('uid', '==', user?.uid),
-    orderBy('created', 'desc')
-  ])
+  } = useFetchData<WalletType>('wallets',
+    user?.uid ? [
+      where('uid', '==', user.uid),
+      orderBy('created', 'desc')
+    ] : []
+  )
 
   const [loading, setLoading] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -101,6 +103,11 @@ const TransactionModal = () => {
 
     console.log('Good to go')
 
+    if (!user?.uid) {
+      Alert.alert('Erro', 'Usuário não autenticado')
+      return
+    }
+
     let transactionData: TransactionType = {
       type,
       amount,
@@ -109,7 +116,7 @@ const TransactionModal = () => {
       date,
       walletId,
       image: image ? image : null,
-      uid: user?.uid
+      uid: user.uid
     }
 
     console.log('Transaction Data: ', transactionData)

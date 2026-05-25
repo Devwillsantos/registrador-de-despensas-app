@@ -41,16 +41,20 @@ const ProfileModal = () => {
   }, [user])
 
   const onSubmit = async () => {
+    if (!user?.uid) {
+      Alert.alert('Erro', 'Usuário não autenticado')
+      return
+    }
     let { name, image } = userData
     if (!name.trim()) {
       Alert.alert('Usuário', 'Por favor, preencha todos os campos.')
       return
     }
     setLoading(true)
-    const res = await updateUser(user?.uid as string, userData)
+    const res = await updateUser(user.uid, userData)
     setLoading(false)
     if (res.success) {
-      updateUserData(user?.uid as string)
+      updateUserData(user.uid)
       router.back()
     } else Alert.alert('Usuário', res.message)
   }

@@ -21,10 +21,12 @@ const Wallet = () => {
     data: wallets,
     error,
     loading
-  } = useFetchData<WalletType>('wallets', [
-    where('uid', '==', user?.uid),
-    orderBy('created', 'desc')
-  ])
+  } = useFetchData<WalletType>('wallets',
+    user?.uid ? [
+      where('uid', '==', user.uid),
+      orderBy('created', 'desc')
+    ] : []
+  )
 
   const getTotalBalance = () =>
     wallets.reduce((total, item) => {
