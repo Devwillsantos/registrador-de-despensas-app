@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Platform } from 'react-native'
 
 import {
   CLOUDINARY_CLOUD_NAME,
@@ -21,11 +22,23 @@ export const uploadFileToCloudinary = async (
 
     if (file && file.uri) {
       const formData = new FormData()
-      formData.append('file', {
-        uri: file.uri,
-        type: 'image/jpeg',
-        name: file?.uri?.split('/').pop() || 'file.jpg'
-      } as any)
+
+      if (Platform.OS === 'web') {
+        // On web, ImagePicker returns a blob: URI.
+        // We must fetch it and append a real Blob — the native
+        // { uri, type, name } object format is not supported on web.
+        const fetchResponse = await fetch(file.uri)
+        const blob = await fetchResponse.blob()
+        const filename = file.uri.split('/').pop() || 'file.jpg'
+        formData.append('file', blob, filename)
+      } else {
+        // On iOS / Android, use the React Native FormData format.
+        formData.append('file', {
+          uri: file.uri,
+          type: 'image/jpeg',
+          name: file?.uri?.split('/').pop() || 'file.jpg'
+        } as any)
+      }
 
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
       formData.append('folder', folderName)
