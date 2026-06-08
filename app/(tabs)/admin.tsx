@@ -1,0 +1,409 @@
+import Header from '@/components/Header'
+import ScreenWrapper from '@/components/ScreenWrapper'
+import Typo from '@/components/Typo'
+import { colors, radius, spacingX, spacingY } from '@/constants/theme'
+import { useAuth } from '@/contexts/authContext'
+import { deleteUser, fetchAllUsers, AdminUser } from '@/services/adminService'
+import { verticalScale } from '@/utils/styling'
+import { useFocusEffect } from '@react-navigation/native'
+import { Lock, Trash, WarningCircle, X } from 'phosphor-react-native'
+import React, { useCallback, useState } from 'react'
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  FlatList,
+  ActivityIndicator
+} from 'react-native'
+import Animated, { FadeInDown } from 'react-native-reanimated'
+
+const Admin = () => {
+  const { user } = useAuth()
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [loading, setLoading] = useState(false)
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [selectedUserForDelete, setSelectedUserForDelete] =
+    useState<AdminUser | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [message, setMessage] = useState<{ type: string; text: string } | null>(
+    null
+  )
+
+  const isAdmin = user?.email === 'admin@admin.com'
+
+  const loadUsers = useCallback(async () => {
+    setLoading(true)
+    const result = await fetchAllUsers()
+    if (result.success && result.data) {
+      setUsers(result.data)
+    } else {
+      setMessage({
+        type: 'error',
+        text: result.message || 'Failed to load users'
+      })
+    }
+    setLoading(false)
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isAdmin) {
+        loadUsers()
+      }
+    }, [isAdmin, loadUsers])
+  )
+
+  const handleDeletePress = (userItem: AdminUser) => {
+    setSelectedUserForDelete(userItem)
+    setDeleteModalVisible(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedUserForDelete) return
+
+    setDeleting(true)
+    const result = await deleteUser(selectedUserForDelete.uid)
+    setDeleting(false)
+
+    setDeleteModalVisible(false)
+
+    if (result.success) {
+      setMessage({
+        type: 'success',
+        text: result.message || 'User deleted successfully'
+      })
+      setUsers((prevUsers) =>
+        prevUsers.filter((u) => u.uid !== selectedUserForDelete.uid)
+      )
+    } else {
+      setMessage({
+        type: 'error',
+        text: result.message || 'Failed to delete user'
+      })
+    }
+
+    setSelectedUserForDelete(null)
+
+    setTimeout(() => {
+      setMessage(null)
+    }, 3000)
+  }
+
+  if (!isAdmin) {
+    return (
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <Header
+            title='Admin'
+            style={{ marginVertical: spacingY._10 }}
+            leftIcon={
+              <Lock size={24} color={colors.primary} weight='fill' />
+            }
+          />
+
+          <View style={styles.restrictedContainer}>
+            <WarningCircle
+              size={verticalScale(64)}
+              color={colors.rose}
+              weight='fill'
+            />
+            <Typo size={18} fontWeight='700' style={styles.restrictedTitle}>
+              Acesso Restrito
+            </Typo>
+            <Typo
+              size={15}
+              color={colors.neutral400}
+              style={styles.restrictedMessage}>
+              Esta página é apenas para administradores
+            </Typo>
+          </View>
+        </View>
+      </ScreenWrapper>
+    )
+  }
+
+  return (
+    <ScreenWrapper>
+      <View style={styles.container}>
+        <Header
+          title='Gerenciar Usuários'
+          style={{ marginVertical: spacingY._10 }}
+        />
+
+        {message && (
+          <Animated.View
+            entering={FadeInDown}
+            style={[
+              styles.messageBox,
+              {
+                backgroundColor:
+                  message.type === 'success'
+                    ? colors.green
+                    : colors.rose
+              }
+            ]}>
+            <Typo size={14} fontWeight='600' color={colors.white}>
+              {message.text}
+            </Typo>
+          </Animated.View>
+        )}
+
+        {loading && (
+          <View style={styles.centerContent}>
+            <ActivityIndicator size='large' color={colors.primary} />
+          </View>
+        )}
+
+        {!loading && users.length === 0 && (
+          <View style={styles.centerContent}>
+            <Typo size={16} color={colors.neutral400}>
+              Nenhum usuário encontrado
+            </Typo>
+          </View>
+        )}
+
+        {!loading && users.length > 0 && (
+          <FlatList
+            data={users}
+            keyExtractor={(item) => item.uid}
+            renderItem={({ item, index }) => (
+              <Animated.View
+                entering={FadeInDown.delay(index * 50)
+                  .springify()
+                  .damping(14)}>
+                <View style={styles.userCard}>
+                  <View style={styles.userInfo}>
+                    <View style={styles.userNameContainer}>
+                      <Typo
+                        size={16}
+                        fontWeight='600'
+                        color={colors.neutral100}>
+                        {item.name || 'Sem nome'}
+                      </Typo>
+                      <Typo
+                        size={13}
+                        color={colors.neutral400}
+                        style={styles.email}>
+                        {item.email}
+                      </Typo>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.deleteButton,
+                      {
+                        backgroundColor:
+                          item.uid === user?.uid
+                            ? colors.neutral600
+                            : colors.rose
+                      }
+                    ]}
+                    onPress={() => handleDeletePress(item)}
+                    disabled={item.uid === user?.uid}>
+                    <Trash size={18} color={colors.white} weight='fill' />
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
+            )}
+            scrollEnabled={true}
+            contentContainerStyle={styles.listContent}
+            style={styles.list}
+          />
+        )}
+      </View>
+
+      <Modal
+        transparent
+        animationType='fade'
+        visible={deleteModalVisible}
+        onRequestClose={() => setDeleteModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Pressable
+              style={styles.modalCloseIcon}
+              onPress={() => setDeleteModalVisible(false)}>
+              <X size={20} color={colors.neutral300} weight='bold' />
+            </Pressable>
+
+            <WarningCircle
+              size={verticalScale(48)}
+              color={colors.rose}
+              weight='fill'
+            />
+
+            <Typo size={18} fontWeight='700' style={styles.modalTitle}>
+              Deletar Usuário
+            </Typo>
+
+            <Typo size={15} color={colors.textLighter} style={styles.modalMessage}>
+              Tem certeza que deseja deletar o usuário{' '}
+              <Typo size={15} fontWeight='700' color={colors.rose}>
+                {selectedUserForDelete?.name}
+              </Typo>
+              ?
+            </Typo>
+
+            <Typo
+              size={13}
+              color={colors.neutral400}
+              style={styles.modalSubMessage}>
+              Esta ação irá deletar o usuário de Firestore. Para deletar a
+              autenticação, acesse o Firebase Console.
+            </Typo>
+
+            <View style={styles.modalActions}>
+              <Pressable
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setDeleteModalVisible(false)}
+                disabled={deleting}>
+                <Typo size={15} fontWeight='700' color={colors.text}>
+                  Cancelar
+                </Typo>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalButton, styles.deleteButtonModal]}
+                onPress={handleConfirmDelete}
+                disabled={deleting}>
+                {deleting ? (
+                  <ActivityIndicator size='small' color={colors.white} />
+                ) : (
+                  <Typo size={15} fontWeight='700' color={colors.white}>
+                    Deletar
+                  </Typo>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </ScreenWrapper>
+  )
+}
+
+export default Admin
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: spacingX._20
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  restrictedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacingY._15
+  },
+  restrictedTitle: {
+    marginTop: spacingY._15
+  },
+  restrictedMessage: {
+    textAlign: 'center',
+    maxWidth: '80%'
+  },
+  messageBox: {
+    marginTop: spacingY._15,
+    paddingVertical: spacingY._10,
+    paddingHorizontal: spacingX._15,
+    borderRadius: radius._10,
+    marginBottom: spacingY._15
+  },
+  list: {
+    marginTop: spacingY._15
+  },
+  listContent: {
+    paddingBottom: verticalScale(120)
+  },
+  userCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.neutral800,
+    paddingVertical: spacingY._15,
+    paddingHorizontal: spacingX._15,
+    borderRadius: radius._15,
+    marginBottom: spacingY._12,
+    borderWidth: 1,
+    borderColor: colors.neutral700
+  },
+  userInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacingX._12
+  },
+  userNameContainer: {
+    flex: 1,
+    gap: spacingY._5
+  },
+  email: {
+    marginTop: spacingY._3
+  },
+  deleteButton: {
+    width: verticalScale(44),
+    height: verticalScale(44),
+    borderRadius: radius._12,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacingX._20
+  },
+  modalContainer: {
+    width: '100%',
+    backgroundColor: colors.neutral800,
+    borderRadius: 20,
+    paddingVertical: spacingY._30,
+    paddingHorizontal: spacingX._20,
+    alignItems: 'center',
+    gap: spacingY._10
+  },
+  modalCloseIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    padding: 4
+  },
+  modalTitle: {
+    marginTop: spacingY._10
+  },
+  modalMessage: {
+    textAlign: 'center',
+    lineHeight: 22
+  },
+  modalSubMessage: {
+    textAlign: 'center',
+    lineHeight: 20,
+    marginTop: spacingY._5
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: spacingX._10,
+    marginTop: spacingY._15,
+    width: '100%'
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: verticalScale(12),
+    borderRadius: 12,
+    alignItems: 'center'
+  },
+  cancelButton: {
+    backgroundColor: colors.neutral600
+  },
+  deleteButtonModal: {
+    backgroundColor: colors.rose
+  }
+})

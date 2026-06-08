@@ -1,7 +1,7 @@
 import { colors, spacingY } from '@/constants/theme'
 import { verticalScale } from '@/utils/styling'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import { ChartBar, House, User, Wallet } from 'phosphor-react-native'
+import { ChartBar, House, User, Wallet, Gear } from 'phosphor-react-native'
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function CustomTabs({
@@ -26,6 +26,13 @@ export default function CustomTabs({
     ),
     wallet: (isFocused: boolean) => (
       <Wallet
+        size={verticalScale(30)}
+        weight={isFocused ? 'fill' : 'regular'}
+        color={isFocused ? colors.primary : colors.neutral400}
+      />
+    ),
+    admin: (isFocused: boolean) => (
+      <Gear
         size={verticalScale(30)}
         weight={isFocused ? 'fill' : 'regular'}
         color={isFocused ? colors.primary : colors.neutral400}
