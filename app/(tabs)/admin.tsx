@@ -100,7 +100,7 @@ const Admin = () => {
         setMessage(null)
       }, 3000)
     } catch (error: any) {
-      setDeleteError(error?.message || 'Ocorreu um erro ao deletar a conta')
+      setDeleteError(error?.message || 'Ocorreu um erro ao deletar a conta.')
     } finally {
       setDeleteAccountLoading(false)
     }
