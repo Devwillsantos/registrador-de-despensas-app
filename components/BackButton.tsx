@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral600,
     alignSelf: 'flex-start',
     borderRadius: radius._12,
-    borderCurve: 'continous',
+    borderCurve: 'continuous',
     padding: 5
   }
 })

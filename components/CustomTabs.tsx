@@ -4,11 +4,14 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { ChartBar, House, User, Wallet, Gear } from 'phosphor-react-native'
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+type Props = BottomTabBarProps & { isAdmin: boolean }
+
 export default function CustomTabs({
   state,
   descriptors,
-  navigation
-}: BottomTabBarProps) {
+  navigation,
+  isAdmin
+}: Props) {
   const tabbarIcons: any = {
     index: (isFocused: boolean) => (
       <House
@@ -46,6 +49,7 @@ export default function CustomTabs({
       />
     )
   }
+
   return (
     <View style={styles.tabbar}>
       {state.routes.map((route, index) => {
@@ -77,6 +81,8 @@ export default function CustomTabs({
             target: route.key
           })
         }
+
+        if (route.name === 'admin' && !isAdmin) return null
 
         return (
           <TouchableOpacity
