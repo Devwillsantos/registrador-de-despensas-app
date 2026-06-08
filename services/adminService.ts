@@ -32,7 +32,7 @@ export const fetchAllUsers = async (): Promise<{
     console.log('Error fetching users:', error)
     return {
       success: false,
-      message: error?.message || 'Failed to fetch users'
+      message: error?.message || 'Erro ao buscar usuários.'
     }
   }
 }
@@ -44,12 +44,12 @@ export const deleteUserFromFirestore = async (uid: string): Promise<{
   try {
     const userRef = doc(firestore, 'users', uid)
     await deleteDoc(userRef)
-    return { success: true, message: 'User deleted from Firestore' }
+    return { success: true, message: 'Usuário deletado do Firestore.' }
   } catch (error: any) {
-    console.log('Error deleting user from Firestore:', error)
+    console.log('Erro ao deletar usuário do Firestore:', error)
     return {
       success: false,
-      message: error?.message || 'Failed to delete user from Firestore'
+      message: error?.message || 'Erro ao deletar usuário do Firestore.'
     }
   }
 }
@@ -65,7 +65,7 @@ export const deleteUser = async (uid: string): Promise<{
       return {
         success: true,
         message:
-          'User deleted successfully from Firestore. Note: To delete user authentication data, use Firebase Console or Backend API.'
+          'Usuário deletado com sucesso do Firestore.'
       }
     } else {
       return firestoreResult
@@ -74,7 +74,7 @@ export const deleteUser = async (uid: string): Promise<{
     console.log('Error deleting user:', error)
     return {
       success: false,
-      message: error?.message || 'Failed to delete user'
+      message: error?.message || 'Erro ao deletar usuário.'
     }
   }
 }
