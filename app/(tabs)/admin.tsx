@@ -100,7 +100,7 @@ const Admin = () => {
         setMessage(null)
       }, 3000)
     } catch (error: any) {
-      setDeleteError(error?.message || 'Ocorreu um erro ao deletar a conta.')
+      setDeleteError(error?.message || 'Ocorreu um erro ao deletar a conta')
     } finally {
       setDeleteAccountLoading(false)
     }
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     gap: spacingY._5
   },
   email: {
-    marginTop: spacingY._30
+    // marginTop: spacingY._30
   },
   deleteAccountButton: {
     width: verticalScale(44),
