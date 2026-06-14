@@ -19,4 +19,4 @@ Este projeto foi realizado como parte da disciplina de Desenvolvimento Mobile.
 
 ## 👥 Desenvolvedores
 * William Cezar dos Santos
-* jhonathan da Silva
+* Jhonathan da Silva
