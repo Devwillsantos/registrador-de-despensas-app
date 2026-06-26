@@ -3,8 +3,8 @@
 Um aplicativo mobile simples e intuitivo desenvolvido para o gerenciamento de finanças pessoais e controle de gastos diários.
 Este projeto foi realizado como parte da disciplina de Desenvolvimento Mobile.
 
-![Tela Principal](assets/expenseTracker2.png)
 ![Tela Incial](assets/expenseTracker1.png)
+![Tela Principal](assets/expenseTracker2.png)
 
 
 ## 🛠️ Tecnologias Utilizadas
