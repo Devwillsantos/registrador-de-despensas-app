@@ -4,6 +4,8 @@ Um aplicativo mobile simples e intuitivo desenvolvido para o gerenciamento de fi
 Este projeto foi realizado como parte da disciplina de Desenvolvimento Mobile.
 
 ![Tela Principal](assets/expenseTracker2.png)
+![Tela Incial](assets/expenseTracker1.png)
+
 
 ## 🛠️ Tecnologias Utilizadas
 
